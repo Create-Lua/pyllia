@@ -1,3 +1,5 @@
+__version__ = "1.0"
+
 def run(args, shell_state):
     if not args:
         print("Usage: pyllia [--version|--credits]")
