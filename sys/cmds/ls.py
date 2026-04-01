@@ -1,3 +1,5 @@
+__version__ = "1.0"
+
 import os
 
 def run(args, shell_state):
