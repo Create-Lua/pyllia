@@ -1,4 +1,4 @@
-__version__ = "1.2"
+__version__ = "1.1"
 
 import os
 import json
@@ -8,13 +8,14 @@ import urllib.request
 # Repo settings
 # ----------------------------
 repo_user = "Create-Lua"
-repo_name = "pyllia"  # your repo name
+repo_name = "pyllia"  # your GitHub repo name
 
 # ----------------------------
 # Helper functions
 # ----------------------------
-def raw_url(branch, filepath):
-    return f"https://raw.githubusercontent.com/{repo_user}/{repo_name}/{branch}/{filepath}"
+def parse_version(ver_str):
+    """Convert '1.2.3' into (1,2,3) for numeric comparison"""
+    return tuple(int(x) for x in ver_str.split("."))
 
 def get_remote_version(url):
     try:
@@ -23,7 +24,8 @@ def get_remote_version(url):
         for line in content.splitlines():
             line = line.strip()
             if line.startswith("__version__"):
-                return line.split("=")[1].strip().strip('"').strip("'")
+                ver = line.split("=")[1].strip().strip('"').strip("'")
+                return parse_version(ver)
         return None
     except Exception:
         return None
@@ -32,14 +34,18 @@ def get_local_version(filepath):
     if not os.path.exists(filepath):
         return None
     try:
-        with open(filepath, "r") as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line.startswith("__version__"):
-                    return line.split("=")[1].strip().strip('"').strip("'")
+                    ver = line.split("=")[1].strip().strip('"').strip("'")
+                    return parse_version(ver)
         return None
     except Exception:
         return None
+
+def raw_url(branch, filepath):
+    return f"https://raw.githubusercontent.com/{repo_user}/{repo_name}/{branch}/{filepath}"
 
 # ----------------------------
 # Main fetch command
@@ -68,10 +74,10 @@ def run(args, shell_state):
         package = args[1]
         dest_path = os.path.join(cmds_dir, f"{package}.py")
         remote_ver = get_remote_version(raw_url("main", f"cmds/{package}.py"))
-        local_ver = get_local_version(dest_path)
         if remote_ver is None:
             print("Package not found")
             return
+        local_ver = get_local_version(dest_path)
         if local_ver is None or remote_ver > local_ver:
             try:
                 urllib.request.urlretrieve(raw_url("main", f"cmds/{package}.py"), dest_path)
@@ -118,7 +124,7 @@ def run(args, shell_state):
     elif flag == "-Ua":
         updated_any = False
 
-        # Step 1: Update all sys commands
+        # Step 1: Update sys commands
         sys_cmds_url = f"https://api.github.com/repos/{repo_user}/{repo_name}/contents/sys/cmds"
         try:
             with urllib.request.urlopen(sys_cmds_url) as response:
@@ -156,7 +162,7 @@ def run(args, shell_state):
             with urllib.request.urlopen(raw_url("sys/config", "config.json")) as response:
                 remote_config = response.read().decode("utf-8")
             remote_data = json.loads(remote_config)
-            remote_ver = remote_data.get("version", None)
+            remote_ver = parse_version(str(remote_data.get("version", "0")))
         except Exception:
             remote_ver = None
 
@@ -165,7 +171,7 @@ def run(args, shell_state):
             if os.path.exists(config_path):
                 with open(config_path, "r") as f:
                     local_data = json.load(f)
-            local_ver = local_data.get("version", None)
+            local_ver = parse_version(str(local_data.get("version", "0")))
             if remote_ver and (local_ver is None or remote_ver > local_ver):
                 with open(config_path, "w") as f:
                     f.write(remote_config)
