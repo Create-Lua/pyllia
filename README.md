@@ -4,22 +4,7 @@ Pyllia is a fully modular terminal emulator coded 100% in python.
 
 I made this in a specific way so that people could code their own commands.
 
-# How to use.
-
-## Linux
--- Step 1
-If your on linux, currently we only have debian support so if your not using debian or any distro based off it, then download the files from releases and run the Terminal.py file. then run "fetch -Ua" once in pyllia to install all the base commands.
-
-If you on debian, open your terminal and run "sudo apt install pyllia"
-
--- Step 2
-Run the command "pyllia"
-
-You will now be inside of the pyllia terminal.
-
--- Step 3
-Whilst inside of pyllia, run the command "fetch -Ua"
-this will update the system and install all the base commands.
+# How to use
 
 ## Windows
 -- Step 1
@@ -34,3 +19,15 @@ Open CMD and navigate into the project folder after you have extracted the zip f
 -- Step 4
 Once in the project folder, run "python3 Terminal.py"
 if that says command not found, run "python Terminal.py"
+
+## macOS
+-- Step 1
+Download and extract Pyllia.(Version).zip from releases
+
+-- Step 2
+Open terminal and navigate to the project folder.
+
+-- Step 3
+Run python3 Terminal.py inside of the macOS Terminal.
+
+## Thank you for using Pyllia.
