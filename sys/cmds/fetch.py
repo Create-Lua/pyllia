@@ -1,72 +1,89 @@
 __version__ = "1.0"
 
-import os
-import urllib.request
-import json
-import importlib.util
 
+import os
+import json
+import urllib.request
+
+# ----------------------------
+# Repo settings
+# ----------------------------
+repo_user = "Create-Lua"
+repo_name = "pyllia"  # your new repo name
+
+# ----------------------------
+# Helper functions
+# ----------------------------
+def raw_url(branch, filepath):
+    return f"https://raw.githubusercontent.com/{repo_user}/{repo_name}/{branch}/{filepath}"
+
+def get_remote_version(url):
+    try:
+        with urllib.request.urlopen(url) as response:
+            content = response.read().decode("utf-8")
+        for line in content.splitlines():
+            line = line.strip()
+            if line.startswith("__version__"):
+                return line.split("=")[1].strip().strip('"').strip("'")
+        return None
+    except Exception:
+        return None
+
+def get_local_version(filepath):
+    if not os.path.exists(filepath):
+        return None
+    try:
+        with open(filepath, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("__version__"):
+                    return line.split("=")[1].strip().strip('"').strip("'")
+        return None
+    except Exception:
+        return None
+
+# ----------------------------
+# Main fetch command
+# ----------------------------
 def run(args, shell_state):
     if len(args) < 1:
         print("Usage: fetch -S|-R|-U|-Ua <package_name>")
         return
 
-    flag = args[0].lower()
-    base_dir = shell_state["current_dir"]
-    cmds_dir = os.path.join(base_dir, "cmds")
-    config_dir = os.path.join(base_dir, "config")
-    terminal_path = os.path.join(base_dir, "Terminal.py")
+    flag = args[0]
+    current_dir = shell_state["current_dir"]
+    cmds_dir = os.path.join(current_dir, "cmds")
+    config_dir = os.path.join(current_dir, "config")
+    terminal_path = os.path.join(current_dir, "Terminal.py")
 
     os.makedirs(cmds_dir, exist_ok=True)
     os.makedirs(config_dir, exist_ok=True)
 
-    repo_user = "Create-Lua"
-    repo_name = "pyllia"
-
-    def raw_url(folder, filename):
-        return f"https://raw.githubusercontent.com/{repo_user}/{repo_name}/main/{folder}/{filename}"
-
-    def get_remote_version(url):
-        try:
-            with urllib.request.urlopen(url) as response:
-                content = response.read().decode("utf-8")
-            for line in content.splitlines():
-                if line.startswith("__version__"):
-                    return line.split("=")[1].strip().strip('"\'')
-        except Exception:
-            return None
-
-    def get_local_version(path):
-        if not os.path.exists(path):
-            return None
-        try:
-            spec = importlib.util.spec_from_file_location("temp_module", path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            return getattr(module, "__version__", None)
-        except Exception:
-            return None
+    installed_packages = [f for f in os.listdir(cmds_dir) if f.endswith(".py") and f != "fetch.py"]
 
     # ------------------- INSTALL -------------------
-    if flag == "-s":
+    if flag == "-S":
         if len(args) < 2:
             print("Usage: fetch -S <package_name>")
             return
         package = args[1]
         dest_path = os.path.join(cmds_dir, f"{package}.py")
-        remote_url = raw_url("fetch-repo", f"{package}.py")
-        try:
-            remote_ver = get_remote_version(remote_url)
-            if remote_ver is None:
-                print("Package not found")
-                return
-            local_ver = get_local_version(dest_path)
-            if local_ver is None or remote_ver > local_ver:
-                urllib.request.urlretrieve(remote_url, dest_path)
-        except Exception as e:
-            print(f"Failed to download {package}: {e}")
+        remote_ver = get_remote_version(raw_url("main", f"cmds/{package}.py"))
+        local_ver = get_local_version(dest_path)
+        if remote_ver is None:
+            print("Package not found")
+            return
+        if local_ver is None or remote_ver > local_ver:
+            try:
+                urllib.request.urlretrieve(raw_url("main", f"cmds/{package}.py"), dest_path)
+                print(f"{package} Installed/Updated successfully")
+            except Exception as e:
+                print(f"Failed to download {package}: {e}")
+        else:
+            print(f"{package} is already up to date")
 
     # ------------------- REMOVE -------------------
-    elif flag == "-r":
+    elif flag == "-R":
         if len(args) < 2:
             print("Usage: fetch -R <package_name>")
             return
@@ -77,44 +94,35 @@ def run(args, shell_state):
             return
         try:
             os.remove(dest_path)
+            print(f"{package} removed successfully")
         except Exception as e:
             print(f"Failed to remove {package}: {e}")
 
     # ------------------- UPDATE -------------------
-    elif flag == "-u":
-        for pkg_file in os.listdir(cmds_dir):
-            if not pkg_file.endswith(".py") or pkg_file == "fetch.py":
-                continue
+    elif flag == "-U":
+        updated_any = False
+        for pkg_file in installed_packages:
             local_path = os.path.join(cmds_dir, pkg_file)
-            remote_url = raw_url("fetch-repo", pkg_file)
-            remote_ver = get_remote_version(remote_url)
+            remote_ver = get_remote_version(raw_url("main", f"cmds/{pkg_file}"))
             local_ver = get_local_version(local_path)
             if remote_ver and (local_ver is None or remote_ver > local_ver):
                 try:
-                    urllib.request.urlretrieve(remote_url, local_path)
+                    urllib.request.urlretrieve(raw_url("main", f"cmds/{pkg_file}"), local_path)
+                    print(f"{pkg_file[:-3]} Updated successfully")
+                    updated_any = True
                 except Exception as e:
                     print(f"Failed to update {pkg_file[:-3]}: {e}")
+        if not updated_any:
+            print("All packages up to date")
 
     # ------------------- UPDATE + SYS -------------------
-    elif flag == "-ua":
-        # Step 1: update installed packages
-        for pkg_file in os.listdir(cmds_dir):
-            if not pkg_file.endswith(".py") or pkg_file == "fetch.py":
-                continue
-            local_path = os.path.join(cmds_dir, pkg_file)
-            remote_url = raw_url("fetch-repo", pkg_file)
-            remote_ver = get_remote_version(remote_url)
-            local_ver = get_local_version(local_path)
-            if remote_ver and (local_ver is None or remote_ver > local_ver):
-                try:
-                    urllib.request.urlretrieve(remote_url, local_path)
-                except Exception as e:
-                    print(f"Failed to update {pkg_file[:-3]}: {e}")
+    elif flag == "-Ua":
+        updated_any = False
 
-        # Step 2: update sys commands
-        sys_cmds_api = f"https://api.github.com/repos/{repo_user}/{repo_name}/contents/sys/cmds"
+        # Step 1: Update sys commands
+        sys_cmds_url = f"https://api.github.com/repos/{repo_user}/{repo_name}/contents/sys/cmds"
         try:
-            with urllib.request.urlopen(sys_cmds_api) as response:
+            with urllib.request.urlopen(sys_cmds_url) as response:
                 data = json.load(response)
             sys_files = [f["name"] for f in data if f["name"].endswith(".py")]
         except Exception:
@@ -122,25 +130,28 @@ def run(args, shell_state):
 
         for cmd_file in sys_files:
             dest_path = os.path.join(cmds_dir, cmd_file)
-            remote_url = raw_url("sys/cmds", cmd_file)
-            remote_ver = get_remote_version(remote_url)
+            remote_ver = get_remote_version(raw_url("sys/cmds", cmd_file))
             local_ver = get_local_version(dest_path)
             if remote_ver and (local_ver is None or remote_ver > local_ver):
                 try:
-                    urllib.request.urlretrieve(remote_url, dest_path)
+                    urllib.request.urlretrieve(raw_url("sys/cmds", cmd_file), dest_path)
+                    print(f"{cmd_file[:-3]} Updated successfully")
+                    updated_any = True
                 except Exception as e:
                     print(f"Failed to update {cmd_file[:-3]}: {e}")
 
-        # Step 3: Terminal.py
+        # Step 2: Terminal.py
         remote_ver = get_remote_version(raw_url("sys", "Terminal.py"))
         local_ver = get_local_version(terminal_path)
         if remote_ver and (local_ver is None or remote_ver > local_ver):
             try:
                 urllib.request.urlretrieve(raw_url("sys", "Terminal.py"), terminal_path)
+                print("Terminal.py Updated successfully")
+                updated_any = True
             except Exception as e:
                 print(f"Failed to update Terminal.py: {e}")
 
-        # Step 4: config.json
+        # Step 3: config.json
         config_path = os.path.join(config_dir, "config.json")
         try:
             with urllib.request.urlopen(raw_url("sys/config", "config.json")) as response:
@@ -159,8 +170,13 @@ def run(args, shell_state):
             if remote_ver and (local_ver is None or remote_ver > local_ver):
                 with open(config_path, "w") as f:
                     f.write(remote_config)
+                print("config.json Updated successfully")
+                updated_any = True
         except Exception as e:
             print(f"Failed to update config.json: {e}")
 
+        if not updated_any:
+            print("All packages up to date")
+
     else:
-        print("Invalid flag. Use -S to install/reinstall, -R to remove, -U to update installed packages, or -Ua to update installed packages + sys branch.")
+        print("Invalid flag. Use -S to install, -R to remove, -U to update installed packages, or -Ua to update installed packages + sys branch.")
