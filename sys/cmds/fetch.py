@@ -1,5 +1,4 @@
-__version__ = "1.1"
-
+__version__ = "1.2"
 
 import os
 import json
@@ -9,7 +8,7 @@ import urllib.request
 # Repo settings
 # ----------------------------
 repo_user = "Create-Lua"
-repo_name = "pyllia"  # your new repo name
+repo_name = "pyllia"  # your repo name
 
 # ----------------------------
 # Helper functions
@@ -119,7 +118,7 @@ def run(args, shell_state):
     elif flag == "-Ua":
         updated_any = False
 
-        # Step 1: Update sys commands
+        # Step 1: Update all sys commands
         sys_cmds_url = f"https://api.github.com/repos/{repo_user}/{repo_name}/contents/sys/cmds"
         try:
             with urllib.request.urlopen(sys_cmds_url) as response:
