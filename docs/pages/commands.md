@@ -5,9 +5,7 @@ nav_order: 3
 
 # Commands
 
-This page lists the commands currently available in Pyllia.
-
----
+This table lists all available Pyllia commands.
 
 <table>
   <thead>
@@ -15,32 +13,113 @@ This page lists the commands currently available in Pyllia.
       <th>Command</th>
       <th>Description</th>
       <th>Usage</th>
+      <th>Flags</th>
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>cat</code></td><td>Display the contents of a file</td><td><code>cat &lt;file&gt;</code></td></tr>
-    <tr><td><code>cd</code></td><td>Change the current directory</td><td><code>cd &lt;directory&gt;</code></td></tr>
-    <tr><td><code>clear</code></td><td>Clears the terminal screen</td><td><code>clear</code></td></tr>
-    <tr><td><code>config</code></td><td>View or edit Pyllia configuration</td><td><code>config</code></td></tr>
-    <tr><td><code>copy</code></td><td>Copy files or directories</td><td><code>copy &lt;source&gt; &lt;destination&gt;</code></td></tr>
-    <tr><td><code>dean</code></td><td>Prints a fun message about a goat named Dean</td><td><code>dean</code></td></tr>
-    <tr><td><code>del</code></td><td>Delete files or directories</td><td><code>del &lt;target&gt;</code></td></tr>
-    <tr><td><code>echo</code></td><td>Print text to the terminal</td><td><code>echo &lt;text&gt;</code></td></tr>
-    <tr><td><code>fetch</code></td><td>Download or fetch content from a URL or repo</td><td><code>fetch &lt;url&gt;</code></td></tr>
-    <tr><td><code>hello</code></td><td>Print a greeting message</td><td><code>hello</code></td></tr>
-    <tr><td><code>help</code></td><td>Show available commands</td><td><code>help</code></td></tr>
-    <tr><td><code>ls</code></td><td>List files and directories in the current directory</td><td><code>ls</code></td></tr>
-    <tr><td><code>mkdir</code></td><td>Create a new directory</td><td><code>mkdir &lt;directory&gt;</code></td></tr>
-    <tr><td><code>pyllia</code></td><td>Display terminal info.</td><td><code>pyllia</code></td></tr>
-    <tr><td><code>ren</code></td><td>Rename files or directories</td><td><code>ren &lt;old&gt; &lt;new&gt;</code></td></tr>
-    <tr><td><code>sysfetch</code></td><td>Prints system info (work-in-progress, similar to fastfetch)</td><td><code>sysfetch</code></td></tr>
+    <tr>
+      <td>cat</td>
+      <td>Display file contents</td>
+      <td>cat &lt;file&gt;</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>cd</td>
+      <td>Change the current directory</td>
+      <td>cd &lt;dir&gt;</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>clear</td>
+      <td>Clears the terminal</td>
+      <td>clear</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>config</td>
+      <td>Edit Pyllia config</td>
+      <td>config &lt;option&gt; &lt;value&gt;</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>copy</td>
+      <td>Copy files</td>
+      <td>copy &lt;source&gt; &lt;destination&gt;</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>dean</td>
+      <td>Idfk run it and find out</td>
+      <td>dean</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>del</td>
+      <td>Deletes files or directories</td>
+      <td>del &lt;target&gt;</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>echo</td>
+      <td>Print text</td>
+      <td>echo &lt;text&gt;</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>fetch</td>
+      <td>Pyllia package manager</td>
+      <td>fetch &lt;flag&gt; &lt;Optional: Package name&gt;</td>
+      <td>
+        -S: Download community command<br>
+        -U: Update downloaded community commands<br>
+        -Ua: Update System + community commands
+      </td>
+    </tr>
+    <tr>
+      <td>hello</td>
+      <td>Sends greeting</td>
+      <td>hello</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>help</td>
+      <td>Shows available commands</td>
+      <td>help</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>ls</td>
+      <td>List files and directories</td>
+      <td>ls</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>mkdir</td>
+      <td>Creates a directory</td>
+      <td>mkdir &lt;name&gt;</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>pyllia</td>
+      <td>Does a bunch of stuff</td>
+      <td>pyllia &lt;flag&gt;</td>
+      <td>
+        --version: Shows current Pyllia version<br>
+        --credits: Shows creators of Pyllia<br>
+        --cow: Shows cool lil ASCII cow
+      </td>
+    </tr>
+    <tr>
+      <td>ren</td>
+      <td>Renames files or directories</td>
+      <td>ren &lt;old&gt; &lt;new&gt;</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>sysfetch</td>
+      <td>Prints system info (WIP)</td>
+      <td>sysfetch</td>
+      <td>None</td>
+    </tr>
   </tbody>
 </table>
-
----
-
-## Notes
-
-- Commands are modular and loaded from Pyllia’s system files  
-- Usage may vary slightly depending on OS or Pyllia version  
-- This table reflects **Pyllia 1.6**
