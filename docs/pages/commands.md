@@ -31,7 +31,7 @@ This page lists the commands currently available in Pyllia.
     <tr><td><code>help</code></td><td>Show available commands</td><td><code>help</code></td></tr>
     <tr><td><code>ls</code></td><td>List files and directories in the current directory</td><td><code>ls</code></td></tr>
     <tr><td><code>mkdir</code></td><td>Create a new directory</td><td><code>mkdir &lt;directory&gt;</code></td></tr>
-    <tr><td><code>pyllia</code></td><td>Launch or display Pyllia terminal info</td><td><code>pyllia</code></td></tr>
+    <tr><td><code>pyllia</code></td><td>Display terminal info.</td><td><code>pyllia</code></td></tr>
     <tr><td><code>ren</code></td><td>Rename files or directories</td><td><code>ren &lt;old&gt; &lt;new&gt;</code></td></tr>
     <tr><td><code>sysfetch</code></td><td>Prints system info (work-in-progress, similar to fastfetch)</td><td><code>sysfetch</code></td></tr>
   </tbody>
