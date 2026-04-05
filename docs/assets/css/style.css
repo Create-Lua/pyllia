@@ -1,0 +1,61 @@
+/* Global Dark Theme */
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+}
+
+a {
+    color: #1e90ff;
+}
+
+a:hover {
+    color: #63b3ed;
+}
+
+/* Header / Navigation */
+header, nav, .site-footer {
+    background-color: #1c1c1c;
+    color: #e0e0e0;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+table th, table td {
+    border: 1px solid #333;
+    padding: 0.5rem 1rem;
+    text-align: left;
+}
+
+table th {
+    background-color: #222;
+    color: #fff;
+}
+
+table tr:nth-child(even) {
+    background-color: #1a1a1a;
+}
+
+table tr:nth-child(odd) {
+    background-color: #161616;
+}
+
+/* Code blocks / pre */
+pre, code {
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+}
+
+/* Sidebar (if used) */
+.sidebar {
+    background-color: #1c1c1c;
+    color: #e0e0e0;
+}
