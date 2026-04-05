@@ -1,16 +1,11 @@
-# Pyllia Docs - Dark Theme
 title: Pyllia Docs
 description: Lightweight Python terminal
-theme: jekyll-theme-minimal
-baseurl: ""
-url: ""
+theme: jekyll-theme-slate
+baseurl: ""  # leave empty for root
+url: ""      # leave empty for GitHub Pages
 
 # Navigation
 nav:
   - Home: index.md
   - Install: pages/install.md
   - Commands: pages/commands.md
-
-# Enable plugins if needed
-plugins:
-  - jekyll-feed
