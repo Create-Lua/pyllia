@@ -1,8 +1,14 @@
----
-layout: default
-title: Home
----
+# Pyllia
 
-# Pyllia Docs
+A lightweight Python terminal.
 
-[Go to Documentation](pages/main/index.html)
+## Features
+- Custom commands
+- Modular system
+- Lightweight and fast
+
+## Quick Start
+See [Installation](install.md)
+
+## Commands
+See [Command List](commands.md)
