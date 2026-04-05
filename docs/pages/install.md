@@ -9,39 +9,29 @@ title: Installation
 
 <select id="os-select">
   <option value="">--Choose OS--</option>
-  <option value="macos">macOS</option>
   <option value="windows">Windows</option>
+  <option value="macos">macOS</option>
 </select>
 
 <div id="instructions" style="margin-top:20px;"></div>
 
 <script>
   const instructions = {
-    macos: `
-### macOS Installation
-
-**Requirements:**
-- Python 3 installed
-
-**Install:**
-\`\`\`bash
-git clone https://github.com/Create-Lua/pyllia.git
-cd pyllia/sys
-python3 Terminal.py
-\`\`\`
-`,
     windows: `
-### Windows Installation
-
-**Requirements:**
-- Python 3 installed
-
-**Install:**
-\`\`\`bash
-git clone https://github.com/Create-Lua/pyllia.git
+<h3>Windows Installation</h3>
+<p><strong>Requirements:</strong><br>- Python 3 installed</p>
+<p><strong>Install:</strong></p>
+<pre><code>git clone https://github.com/Create-Lua/pyllia.git
 cd pyllia\\sys
-python Terminal.py
-\`\`\`
+python Terminal.py</code></pre>
+`,
+    macos: `
+<h3>macOS Installation</h3>
+<p><strong>Requirements:</strong><br>- Python 3 installed</p>
+<p><strong>Install:</strong></p>
+<pre><code>git clone https://github.com/Create-Lua/pyllia.git
+cd pyllia/sys
+python3 Terminal.py</code></pre>
 `
   };
 
