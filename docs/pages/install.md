@@ -7,16 +7,16 @@ nav_order: 2
 
 ## What OS are you using?
 
-- [Linux](#linux)
 - [macOS](#macos)
+- [Windows](#windows)
 
 ---
 
-## Linux
+## macOS
 
-### APT (Recommended)
-If you added the Pyllia repo:
+### Requirements
+- Python 3 installed
 
+Check with:
 ```bash
-sudo apt update
-sudo apt install pyllia
+python3 --version
