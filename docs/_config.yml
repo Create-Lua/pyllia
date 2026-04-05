@@ -1,11 +1,27 @@
-remote_theme: pages-themes/minimal@v0.2.0
-plugins:
-  - jekyll-remote-theme
+# _config.yml for Pyllia Docs with Just The Docs theme
 title: Pyllia Docs
 description: Lightweight Python terminal
+baseurl: "" # leave empty for root of domain
+url: ""     # leave empty for GitHub Pages
+
+# Remote theme
+remote_theme: pmarsceill/just-the-docs
+
+# Plugins
+plugins:
+  - jekyll-remote-theme
 
 # Navigation
 nav:
   - Home: index.md
   - Install: pages/install.md
   - Commands: pages/commands.md
+
+# Just The Docs options
+just_the_docs:
+  logo: assets/images/logo.png # optional, put your logo here
+  favicon: assets/images/favicon.png # optional
+  search: true
+  show_sidebar: true
+  show_breadcrumbs: true
+  show_nav_level: 2
