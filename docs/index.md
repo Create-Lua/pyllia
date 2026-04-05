@@ -6,6 +6,7 @@ A lightweight Python terminal.
 - Custom commands
 - Modular system
 - Lightweight and fast
+- Works on all operating systems
 
 ## Quick Start
 See [Installation](pages/install.html)
