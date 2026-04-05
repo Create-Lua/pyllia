@@ -8,7 +8,7 @@ A lightweight Python terminal.
 - Lightweight and fast
 
 ## Quick Start
-See [Installation](pages/install.md)
+See [Installation](pages/install.html)
 
 ## Commands
-See [Command List](pages/commands.md)
+See [Command List](pages/commands.html)
