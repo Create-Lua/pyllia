@@ -1,9 +1,8 @@
-__version__ = "1.3"
+__version__ = "1.0"
 
 import os
 import json
 import urllib.request
-import urllib.error
 
 # ----------------------------
 # Repo settings
@@ -17,36 +16,6 @@ repo_name = "pyllia"
 def raw_url(branch, filepath):
     """Return raw GitHub URL for a file"""
     return f"https://raw.githubusercontent.com/{repo_user}/{repo_name}/{branch}/{filepath}"
-
-def parse_version(version_str):
-    """Convert version string '1.2.3' to tuple (1,2,3) for comparison"""
-    return tuple(int(x) for x in version_str.split("."))
-
-def get_remote_version(branch, filepath):
-    """Get __version__ from a remote file"""
-    url = raw_url(branch, filepath)
-    try:
-        with urllib.request.urlopen(url) as response:
-            content = response.read().decode("utf-8")
-        for line in content.splitlines():
-            if line.strip().startswith("__version__"):
-                return parse_version(line.split("=")[1].strip().strip('"').strip("'"))
-        return (0, 0, 0)  # fallback if no version specified
-    except Exception:
-        return None  # file not found
-
-def get_local_version(filepath):
-    """Get __version__ from a local file"""
-    if not os.path.exists(filepath):
-        return None
-    try:
-        with open(filepath, "r") as f:
-            for line in f:
-                if line.strip().startswith("__version__"):
-                    return parse_version(line.split("=")[1].strip().strip('"').strip("'"))
-        return (0, 0, 0)
-    except Exception:
-        return (0, 0, 0)
 
 def download_file(url, dest_path):
     """Download a file and return True if successful, False otherwise"""
@@ -85,18 +54,11 @@ def run(args, shell_state):
             return
         package = args[1]
         dest_path = os.path.join(cmds_dir, f"{package}.py")
-        remote_ver = get_remote_version("main", f"cmds/{package}.py")
-        if remote_ver is None:
-            print("Package not found")
-            return
-        local_ver = get_local_version(dest_path)
-        if local_ver is None or remote_ver > local_ver:
-            if download_file(raw_url("main", f"cmds/{package}.py"), dest_path):
-                print(f"{package} Installed/Updated successfully")
-            else:
-                print(f"Failed to download {package}")
+        url = raw_url("main", f"cmds/{package}.py")
+        if download_file(url, dest_path):
+            print(f"{package} Installed/Updated successfully")
         else:
-            print(f"{package} is already up to date")
+            print("Package not found")
 
     # ------------------- REMOVE -------------------
     elif flag == "-R":
@@ -105,26 +67,24 @@ def run(args, shell_state):
             return
         package = args[1]
         dest_path = os.path.join(cmds_dir, f"{package}.py")
-        if not os.path.exists(dest_path):
+        if os.path.exists(dest_path):
+            try:
+                os.remove(dest_path)
+                print(f"{package} removed successfully")
+            except Exception as e:
+                print(f"Failed to remove {package}: {e}")
+        else:
             print(f"No such package installed: {package}")
-            return
-        try:
-            os.remove(dest_path)
-            print(f"{package} removed successfully")
-        except Exception as e:
-            print(f"Failed to remove {package}: {e}")
 
     # ------------------- UPDATE -------------------
     elif flag == "-U":
         updated_any = False
         for pkg_file in installed_packages:
             local_path = os.path.join(cmds_dir, pkg_file)
-            remote_ver = get_remote_version("main", f"cmds/{pkg_file}")
-            local_ver = get_local_version(local_path)
-            if remote_ver and (local_ver is None or remote_ver > local_ver):
-                if download_file(raw_url("main", f"cmds/{pkg_file}"), local_path):
-                    print(f"{pkg_file[:-3]} Updated successfully")
-                    updated_any = True
+            url = raw_url("main", f"cmds/{pkg_file}")
+            if download_file(url, local_path):
+                print(f"{pkg_file[:-3]} Updated successfully")
+                updated_any = True
         if not updated_any:
             print("All packages up to date")
 
@@ -144,44 +104,26 @@ def run(args, shell_state):
         # Step 2: Update sys commands
         for cmd_file in sys_files:
             dest_path = os.path.join(cmds_dir, cmd_file)
-            remote_ver = get_remote_version("sys", f"sys/cmds/{cmd_file}")
-            local_ver = get_local_version(dest_path)
-            if remote_ver and (local_ver is None or remote_ver > local_ver):
-                if download_file(raw_url("sys", f"sys/cmds/{cmd_file}"), dest_path):
-                    print(f"{cmd_file[:-3]} Updated successfully")
-                    updated_any = True
+            if download_file(raw_url("sys", f"sys/cmds/{cmd_file}"), dest_path):
+                print(f"{cmd_file[:-3]} Updated successfully")
+                updated_any = True
 
         # Step 3: Terminal.py
-        remote_ver = get_remote_version("sys", "sys/Terminal.py")
-        local_ver = get_local_version(terminal_path)
-        if remote_ver and (local_ver is None or remote_ver > local_ver):
-            if download_file(raw_url("sys", "sys/Terminal.py"), terminal_path):
-                print("Terminal.py Updated successfully")
-                updated_any = True
+        if download_file(raw_url("sys", "sys/Terminal.py"), terminal_path):
+            print("Terminal.py Updated successfully")
+            updated_any = True
 
         # Step 4: config.json
         config_path = os.path.join(config_dir, "config.json")
         try:
             with urllib.request.urlopen(raw_url("sys", "sys/config/config.json")) as response:
                 remote_config = response.read().decode("utf-8")
-            remote_data = json.loads(remote_config)
-            remote_ver = parse_version(str(remote_data.get("version", "0.0.0")))
+            with open(config_path, "w") as f:
+                f.write(remote_config)
+            print("config.json Updated successfully")
+            updated_any = True
         except Exception:
-            remote_ver = None
-
-        try:
-            local_data = {}
-            if os.path.exists(config_path):
-                with open(config_path, "r") as f:
-                    local_data = json.load(f)
-            local_ver = parse_version(str(local_data.get("version", "0.0.0")))
-            if remote_ver and remote_ver > local_ver:
-                with open(config_path, "w") as f:
-                    f.write(remote_config)
-                print("config.json Updated successfully")
-                updated_any = True
-        except Exception as e:
-            print(f"Failed to update config.json: {e}")
+            pass
 
         if not updated_any:
             print("All packages up to date")
